@@ -2,6 +2,7 @@
 var fs          = require('fs'),
     mongoose    = require('mongoose');
 
+var verbose = false;
 
 /**
  * Clears a collection and inserts the given data as new documents
@@ -88,10 +89,12 @@ function insertCollection(modelName, data, callback) {
         var count = 0;
         items.forEach(function(item) {
             var doc = new Model(item);
-            console.log("* Loading: ",item.word);
+            if (verbose) console.log("* Loading: ", item.word);
             doc.save(function(err) {
-                console.log("  Done: ", count++);
-                if (err) console.log("got err", err);
+                if (verbose) {
+                    console.log("* Done: ", count++);
+                    if (err) console.log("* Error: ", err);
+                }
 
                 if (err) return callback(err);
 

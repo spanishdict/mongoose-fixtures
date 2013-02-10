@@ -2,7 +2,9 @@
 var fs          = require('fs'),
     mongoose    = require('mongoose');
 
-var verbose = false;
+var verbose = true,
+    ITER_DELAY = 1;  // ms to delay between saving models.
+
 
 /**
  * Clears a collection and inserts the given data as new documents
@@ -90,18 +92,22 @@ function insertCollection(modelName, data, callback) {
         items.forEach(function(item) {
             var doc = new Model(item);
             if (verbose) console.log("* Loading: ", item.word);
-            doc.save(function(err) {
-                if (verbose) {
-                    console.log("* Done: ", count++);
-                    if (err) console.log("* Error: ", err);
-                }
+            var save = function() {
+                doc.save(function(err) {
+                    if (verbose) {
+                        console.log("* Done: ", count++);
+                        if (err) console.log("* Error: ", err);
+                    }
 
-                if (err) return callback(err);
+                    if (err) return callback(err);
 
-                //Check if task queue is complete
-                tasks.done++;
-                if (tasks.done == tasks.total) callback();
-            });
+                    //Check if task queue is complete
+                    tasks.done++;
+                    if (tasks.done == tasks.total) callback();
+                });
+            };
+
+            setTimeout(save, ITER_DELAY);
         });
     });
 }

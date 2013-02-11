@@ -2,7 +2,7 @@
 var fs          = require('fs'),
     mongoose    = require('mongoose');
 
-var verbose = true,
+var verbose = false,
     ITER_DELAY = 1;  // ms to delay between saving models.
 
 
